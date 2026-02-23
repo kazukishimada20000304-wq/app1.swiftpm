@@ -5,11 +5,31 @@ import UIKit
 @Observable
 class EventStore {
     var events: [BabyEvent] = []
+    var birthDate: Date? {
+        didSet { saveBirthDate() }
+    }
 
     private let eventsKey = "babyEvents"
+    private let birthDateKey = "birthDate"
 
     init() {
         load()
+        loadBirthDate()
+    }
+
+    /// イベント日時点での年齢文字列を返す（生年月日未設定の場合は nil）
+    func ageString(at date: Date) -> String? {
+        guard let birth = birthDate, date >= birth else { return nil }
+        let cal = Calendar.current
+        let c = cal.dateComponents([.year, .month, .day], from: birth, to: date)
+        guard let y = c.year, let m = c.month, let d = c.day else { return nil }
+        if y > 0 {
+            return "\(y)歳\(m)ヶ月\(d)日"
+        } else if m > 0 {
+            return "\(m)ヶ月\(d)日"
+        } else {
+            return "生後\(d)日"
+        }
     }
 
     func add(_ event: BabyEvent) {
@@ -63,5 +83,17 @@ class EventStore {
               let decoded = try? JSONDecoder().decode([BabyEvent].self, from: data)
         else { return }
         events = decoded
+    }
+
+    private func saveBirthDate() {
+        if let date = birthDate {
+            UserDefaults.standard.set(date, forKey: birthDateKey)
+        } else {
+            UserDefaults.standard.removeObject(forKey: birthDateKey)
+        }
+    }
+
+    private func loadBirthDate() {
+        birthDate = UserDefaults.standard.object(forKey: birthDateKey) as? Date
     }
 }

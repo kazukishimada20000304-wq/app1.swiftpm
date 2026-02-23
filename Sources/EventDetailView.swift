@@ -16,7 +16,7 @@ struct EventDetailView: View {
                         .shadow(radius: 4, y: 2)
                 }
 
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 10) {
                     Label(
                         event.date.formatted(date: .long, time: .omitted),
                         systemImage: "calendar"
@@ -24,7 +24,15 @@ struct EventDetailView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
+                    if let age = store.ageString(at: event.date) {
+                        Label(age, systemImage: "figure.child")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundStyle(.pink)
+                    }
+
                     if !event.comment.isEmpty {
+                        Divider()
                         Text(event.comment)
                             .font(.body)
                     }

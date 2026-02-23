@@ -17,6 +17,15 @@ struct EventRowView: View {
                 Text(event.date.formatted(date: .long, time: .omitted))
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                if let age = store.ageString(at: event.date) {
+                    Text(age)
+                        .font(.caption2)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 2)
+                        .background(Color.pink.opacity(0.75), in: Capsule())
+                }
                 if !event.comment.isEmpty {
                     Text(event.comment)
                         .font(.caption)
